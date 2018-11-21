@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  price: 1.5
+  condition: MyString
+  attachment: MyText
+  memo: MyText
+  asin: MyString
+  jan: MyString
+  diff_new_price: 1.5
+  diff_used_price: 1.5
+  url: MyString
+
+two:
+  title: MyString
+  price: 1.5
+  condition: MyString
+  attachment: MyText
+  memo: MyText
+  asin: MyString
+  jan: MyString
+  diff_new_price: 1.5
+  diff_used_price: 1.5
+  url: MyString
