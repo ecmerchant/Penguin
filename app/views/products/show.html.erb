@@ -1,2 +1,82 @@
-<h1>Products#show</h1>
-<p>Find me in app/views/products/show.html.erb</p>
+<div class="page-header" id="banner">
+  <div class="row">
+    <div class="col-lg-12">
+      <h5>商品管理 <small>全<%= @products.count %>件</small></h5>
+      <%= form_tag('/products/import', method:'post', multipart: true, id:'amazon_import') do %>
+        <div class="form-inline">
+          <label>アマゾン商品データの取込み</label>
+          <label style="vertical-align:middle; margin-left:20px;">
+          <span class="btn btn-info">
+            インポート
+            <input type="file" name="amazon_data" onChange="$('#amazon_import').submit();" style="display:none;">
+          </span>
+          </label>
+        </div>
+      <% end %>
+
+      <%= paginate @products %>
+      <table class="table table-striped table-hover table-bordered table-headerfixed ellipsis tablesorter" id="products_table">
+        <thead class="thead-inverse">
+          <tr>
+            <th width="3%"><input type="checkbox" name="check[all]" id="check_all" /></th>
+            <th width="3%">No.</th>
+            <th width="3%">詳細</th>
+            <% Constants::CONV_P.each do |key, value| %>
+            <% if key.to_s == "self_sale" || key.to_s == "delta_link" %>
+            <th width="8%"><%= value %></th>
+            <% elsif key.to_s == "new_price" || key.to_s == "used_price" %>
+            <th width="5%"><%= value %></th>
+            <% elsif key.to_s == "asin" %>
+            <th width="8%"><%= value %></th>
+            <% elsif key.to_s == "jan" %>
+            <th width="9%"><%= value %></th>
+            <% elsif key.to_s == "title" %>
+            <th width="13%"><%= value %></th>
+            <% else %>
+            <th width="7%"><%= value %></th>
+            <% end %>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% counter = 1 %>
+          <% @products.each do |temp| %>
+          <tr>
+            <td width="3%"><input type="checkbox" name="check[<%= temp.id %>]" id="check_<%= temp.id %>" class="chk" /></td>
+            <td width="3%"><%= counter %></td>
+            <td width="3%"><a href="/candidates/show/<%= temp.asin %>">※</a></td>
+            <% Constants::CONV_P.each do |key, value| %>
+            <% if key.to_s == "self_sale" %>
+            <td width="8%"><%= temp[key] %></td>
+            <% elsif key.to_s == "new_price" || key.to_s == "used_price" %>
+            <td width="5%"><%= temp[key].to_i %></td>
+            <% elsif key.to_s == "asin" %>
+            <td width="8%"><a href="https://www.amazon.co.jp/dp/<%= temp[key] %>" target="_blank"><%= temp[key] %></a></td>
+            <% elsif key.to_s == "title" %>
+            <td width="13%" style="word-wrap: break-word; white-space: normal;"><%= temp[key] %></td>
+            <% elsif key.to_s == "jan" %>
+            <td width="9%"><%= temp[key] %></td>
+            <% elsif key.to_s == "search_result" %>
+            <td width="7%"><a href="http://shop.kitamura.jp/used/list.html?f[]=k3&q=<%= temp["jan"] %>" target="_blank"><%= @details.where(asin: temp.asin).count.to_i.to_s %>件</a></td>
+            <% elsif key.to_s == "delta_link" %>
+            <td width="8%"><a href="<%= temp[key] %>" target="_blank"><%= temp[key] %></a></td>
+            <% else %>
+            <td width="7%" style="word-wrap: break-word; white-space: normal;"><%= temp[key] %></td>
+            <% end %>
+            <% end %>
+          </tr>
+          <% counter += 1 %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function(){
+    $('#check_all').on('click', function() {
+      $('.chk').prop('checked', this.checked);
+    });
+  });
+</script>

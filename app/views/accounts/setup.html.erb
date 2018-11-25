@@ -1,0 +1,58 @@
+<div class="page-header" id="banner">
+  <div class="row">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+      <h5>ツールの設定</h5>
+      <div class="col-lg-5">
+        <%= form_for(@account, {url: accounts_setup_path, method: 'post'}) do |f| %>
+          <div class="form-group">
+            <%= f.label :shop_url, "アマゾンURL" %>
+            <%= f.text_field :shop_url, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= f.label :patrol_time, "巡回時間" %><br>
+            <%= f.time_select :patrol_time, {minute_step:60}, {class: 'form-control', style: "display: inline-block; width: auto;"} %>
+          </div>
+          <div class="actions">
+            <%= f.submit "設定", {id: "setup_btn", class: 'btn btn-primary'} %>
+          </div>
+        <% end %>
+        <br>
+        <br>
+        <%= form_for(@label, {url: accounts_setup_path, method: 'post'}) do |f| %>
+          <div class="form-group">
+            <%= f.label :caption, "ラベルの設定" %>
+            <div class="form-inline">
+              No.
+              <%= f.text_field :number, class: 'form-control', style:'width:40px;' %>
+              設定値
+              <%= f.text_field :caption, class: 'form-control' %>
+            </div>
+          </div>
+          <div class="actions">
+            <%= f.submit "更新", {id: "setup_btn", class: 'btn btn-primary'} %>
+          </div>
+        <% end %>
+        <br>
+        <table class="table table-striped table-hover table-bordered" id="label_table">
+          <thead class="thead-inverse">
+            <tr>
+              <th>No.</th>
+              <th>ラベル</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @labels.each do |temp| %>
+            <tr>
+              <td><%= temp.number %></td>
+              <td><%= temp.caption %></td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

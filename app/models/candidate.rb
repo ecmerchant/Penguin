@@ -1,2 +1,3 @@
 class Candidate < ApplicationRecord
+
 end

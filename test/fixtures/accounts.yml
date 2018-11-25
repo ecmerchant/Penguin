@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: MyString
+  shop_url: MyString
+  patrol_time: 2018-11-25 09:28:03
+
+two:
+  user: MyString
+  shop_url: MyString
+  patrol_time: 2018-11-25 09:28:03
