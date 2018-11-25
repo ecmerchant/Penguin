@@ -16,17 +16,27 @@ class ProductsController < ApplicationController
     temp = Product.where(user: current_user.email)
     @products = temp.page(params[:page]).per(PER)
     @labels = Label.where(user: current_user.email).pluck(:caption)
-  end
+    @account = Account.find_by(user: current_user.email)
 
-  def search
-    targets = Product.where(user: current_user.email)
-    data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
-    ProductPatrolJob.perform_later(current_user.email, data)
-    redirect_to products_show_path
-  end
+    @flg_A = false
+    @flg_AB = false
+    @flg_B = false
+    @flg_ALL = false
 
-  def update
-    logger.debug('========== UPDATE ===========')
+    if @account.condition == "A以上" then
+      @flg_A = true
+    elsif @account.condition == "AB以上" then
+      @flg_AB = true
+    elsif @account.condition == "B以上" then
+      @flg_B = true
+    elsif @account.condition == "全て" then
+      @flg_ALL = true
+    end
+
+    @flg_at = @account.attachment
+    @flg_new = @account.new_price_diff.to_i
+    @flg_used = @account.used_price_diff.to_i
+
     if request.post? then
       commit = params[:commit]
       if commit == "更新" then
@@ -55,10 +65,35 @@ class ProductsController < ApplicationController
             temp.find(tid).delete
           end
         end
+      elsif commit == "適用" then
+        cond = params[:condition]
+        if cond != nil then
+          key = cond.keys[0]
+          condition = cond[key]
+        end
+        attach = params[:attachment]
+
+        diff_new_price = params[:diff_new_price].to_i
+        diff_used_price = params[:diff_used_price].to_i
+
+        @account.update(
+          condition: condition,
+          attachment: attach,
+          new_price_diff: diff_new_price,
+          used_price_diff: diff_used_price
+        )
       end
+      redirect_to products_show_path
     end
+  end
+
+  def search
+    targets = Product.where(user: current_user.email)
+    data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
+    ProductPatrolJob.perform_later(current_user.email, data)
     redirect_to products_show_path
   end
+
 
   def import
     user = current_user.email

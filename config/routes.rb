@@ -9,9 +9,9 @@ Rails.application.routes.draw do
 
   get 'products/search'
   get 'products/show'
+  post 'products/show'
   post 'products/import'
-  post 'products/update'
-
+  
   get 'accounts/setup'
   post 'accounts/setup'
 
