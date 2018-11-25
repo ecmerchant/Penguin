@@ -16,7 +16,7 @@ class ProductsController < ApplicationController
     temp = Product.where(user: current_user.email)
     @products = temp.page(params[:page]).per(PER)
     @labels = Label.where(user: current_user.email).pluck(:caption)
-    @account = Account.find_by(user: current_user.email)
+    @account = Account.find_or_create_by(user: current_user.email)
 
     @flg_A = false
     @flg_AB = false
