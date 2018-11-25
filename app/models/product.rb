@@ -23,6 +23,11 @@ class Product < ApplicationRecord
       logger.debug(page.title)
 
       targets = page.search("dl.item-element.used-element")
+      hit_num = targets.count
+
+      product = Product.where(user: user, asin: asin)
+      product.update(search_result: hit_num.to_s)
+
       targets.each do |target|
         item_page = target.at("a")[:href]
         item_page = "http://shop.kitamura.jp" + item_page

@@ -15,15 +15,48 @@ class ProductsController < ApplicationController
     @login_user = current_user
     temp = Product.where(user: current_user.email)
     @products = temp.page(params[:page]).per(PER)
-    @details = Candidate.where(user: current_user.email)
+    @labels = Label.where(user: current_user.email).pluck(:caption)
   end
 
   def search
     targets = Product.where(user: current_user.email)
     data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
-    logger.debug("===============")
-    logger.debug(data)
-    Product.new.search(current_user.email, data)
+    ProductPatrolJob.perform_later(current_user.email, data)
+    redirect_to products_show_path
+  end
+
+  def update
+    logger.debug('========== UPDATE ===========')
+    if request.post? then
+      commit = params[:commit]
+      if commit == "更新" then
+        memos = params[:memo]
+        labels = params[:label]
+        checks = params[:check]
+        logger.debug(memos)
+        logger.debug(labels)
+        temp = Product.where(user: current_user.email)
+        if checks != nil then
+          checks.each do |key, value|
+            tid = key.to_i
+            tag = temp.find(tid)
+            tag.update(
+              memo: memos[key],
+              label: labels[key]
+            )
+          end
+        end
+      elsif commit == "削除" then
+        checks = params[:check]
+        if checks != nil then
+          temp = Product.where(user: current_user.email)
+          checks.each do |key, value|
+            tid = key.to_i
+            temp.find(tid).delete
+          end
+        end
+      end
+    end
     redirect_to products_show_path
   end
 
