@@ -165,27 +165,29 @@ class ProductsController < ApplicationController
           fname = "product_data_" + strTime + ".csv"
           logger.debug(fname)
           send_data(output, filename: fname, type: :csv)
-        elsif commit == "データ取得" then
-          checks = params[:check]
-          if checks != nil then
-            temp = Product.where(user: current_user.email)
-            ids = Array.new
-            checks.each do |key, value|
-              tid = key.to_i
-              if tid != 0 then
-                ids.push(tid)
-              end
-            end
-            targets = Product.where id: ids
-            data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
-            ProductPatrolJob.perform_later(current_user.email, data)
-          else
-            targets = Product.where(user: current_user.email)
-            data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
-            ProductPatrolJob.perform_later(current_user.email, data)
-          end
+        else
           redirect_to products_show_path
         end
+      elsif commit == "データ取得" then
+        checks = params[:check]
+        if checks != nil then
+          temp = Product.where(user: current_user.email)
+          ids = Array.new
+          checks.each do |key, value|
+            tid = key.to_i
+            if tid != 0 then
+              ids.push(tid)
+            end
+          end
+          targets = Product.where id: ids
+          data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
+          ProductPatrolJob.perform_later(current_user.email, data)
+        else
+          targets = Product.where(user: current_user.email)
+          data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
+          ProductPatrolJob.perform_later(current_user.email, data)
+        end
+        redirect_to products_show_path
       end
     end
   end
