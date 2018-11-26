@@ -6,6 +6,18 @@ class AccountsController < ApplicationController
     redirect_to root_url, :alert => exception.message
   end
 
+  def update
+    if request.post? then
+      label = params[:label]
+      user = current_user.email
+      temp = Account.find_by(user: user)
+      temp.update(
+        label: label
+      )
+    end
+    redirect_to products_show_path
+  end
+
   def setup
     @login_user = current_user
     @account = Account.find_or_create_by(user: current_user.email)
@@ -45,9 +57,6 @@ class AccountsController < ApplicationController
           )
         end
       end
-
-    else
-
     end
   end
 

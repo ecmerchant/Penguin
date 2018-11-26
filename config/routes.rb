@@ -11,9 +11,11 @@ Rails.application.routes.draw do
   get 'products/show'
   post 'products/show'
   post 'products/import'
-  
+  get 'products/clear'
+
   get 'accounts/setup'
   post 'accounts/setup'
+  post 'accounts/update'
 
   mount Resque::Server.new, at: "/resque"
 

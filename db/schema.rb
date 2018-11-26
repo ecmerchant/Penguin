@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181125131119) do
+ActiveRecord::Schema.define(version: 20181126134855) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20181125131119) do
     t.string   "attachment"
     t.integer  "new_price_diff"
     t.integer  "used_price_diff"
+    t.string   "label"
   end
 
   create_table "candidates", force: :cascade do |t|
@@ -42,6 +43,7 @@ ActiveRecord::Schema.define(version: 20181125131119) do
     t.datetime "updated_at",      null: false
     t.string   "user"
     t.string   "item_id"
+    t.boolean  "filtered"
     t.index ["user", "asin", "item_id"], name: "for_upsert_candidate", unique: true, using: :btree
   end
 
@@ -68,6 +70,7 @@ ActiveRecord::Schema.define(version: 20181125131119) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.string   "user"
+    t.boolean  "filtered"
     t.index ["user", "asin"], name: "for_upsert", unique: true, using: :btree
   end
 

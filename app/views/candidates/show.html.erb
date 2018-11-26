@@ -49,9 +49,64 @@
         </tbody>
       </table>
       <br>
+      <h5>フィルタの条件(表示のみ)</h5>
+      <table class="table table-striped table-hover table-bordered", style="margin-top:5px;" >
+        <thead>
+          <tr>
+            <th width="25%">商品状態で抽出</th>
+            <th width="25%">付属品で抽出</th>
+            <th width="25%">新品価格差で抽出</th>
+            <th width="25%">中古価格差で抽出</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <label for="condition_A">
+                <%= check_box_tag 'condition[A]', "A以上", @flg_A, id:'condition_A', class:'cond_chk', disabled:'disabled' %>
+                A以上
+              </label>
+              <label for="condition_AB" style="margin-left:10px;">
+                <%= check_box_tag 'condition[AB]', "AB以上", @flg_AB, id:'condition_AB', class:'cond_chk', disabled:'disabled' %>
+                AB以上
+              </label>
+              <label for="condition_B" style="margin-left:10px;">
+                <%= check_box_tag 'condition[B]', "B以上", @flg_B, id:'condition_B', class:'cond_chk', disabled:'disabled' %>
+                B以上
+              </label>
+              <label for="condition_ALL" style="margin-left:10px;">
+                <%= check_box_tag 'condition[ALL]', "全て", @flg_ALL, id:'condition_ALL', class:'cond_chk', disabled:'disabled' %>
+                全て
+              </label>
+            </td>
+            <td>
+              <label for="attachment_on">
+                <%= check_box_tag 'attachment', true, @flg_at, id:'attachment_on' %>
+                「箱」、「説明書」いずれかを含む
+              </label>
+            </td>
+            <td>
+              <div class="form-inline">
+                <label for="diff_new_price">
+                  <%= text_field_tag 'diff_new_price', @flg_new, class:'form-control', style:'width:50%;', readonly: 'readonly' %>
+                  円以上
+                </label>
+              </div>
+            </td>
+            <td>
+              <div class="form-inline">
+                <label for="diff_used_price">
+                  <%= text_field_tag 'diff_used_price', @flg_used, class:'form-control', style:'width:50%;', readonly: 'readonly' %>
+                  円以上
+                </label>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <h5>キタムラ情報詳細 <small>全<%= @products.count %>件</small></h5>
       <%= paginate @products %>
-      <table class="table table-striped table-hover table-bordered table-headerfixed ellipsis tablesorter" id="products_table">
+      <table class="table table-striped table-hover table-bordered table-headerfixed ellipsis tablesorter" id="candidates_table">
         <thead class="thead-inverse">
           <tr>
             <th width="3%"><input type="checkbox" name="check[all]" id="check_all" /></th>
@@ -106,5 +161,10 @@
     $('#check_all').on('click', function() {
       $('.chk').prop('checked', this.checked);
     });
+
+    $(function() {
+      $('#candidates_table').tablesorter();
+    });
+
   });
 </script>

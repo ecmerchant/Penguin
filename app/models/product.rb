@@ -4,10 +4,58 @@ class Product < ApplicationRecord
   require 'mechanize'
   require 'open-uri'
 
+  def reload(user)
+    account = Account.find_by(user: user)
+    if account == nil then
+      return
+    end
+
+    border_condition = account.condition
+    border_attachment = account.attachment
+    border_new_price = account.new_price_diff.to_i
+    border_used_price = account.used_price_diff.to_i
+
+    targets = Product.where(user: user)
+
+    targets.each do |tag|
+      asin = tag.asin
+      temp = Candidate.where(user: user, asin: asin)
+
+      temp.update(
+        filtered: true
+      )
+
+      if border_condition == "A以上" then
+        temp = temp.where("condition like ?", "%A(美品)%")
+      elsif border_condition == "AB以上" then
+        temp = temp.where("condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%")
+      elsif border_condition == "B以上" then
+        temp = temp.where("condition like ? OR condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%", "%B(並品)%")
+      end
+
+      if border_attachment == true then
+        temp = temp.where("attachment like ? OR attachment like ?", "%箱%", "%説明書%")
+      end
+
+      temp = temp.where("diff_new_price >= ?", border_new_price)
+      temp = temp.where("diff_used_price >= ?", border_used_price)
+
+      temp.update(
+        filtered: false
+      )
+
+      result = temp.count
+      tag.update(
+        search_result: result.to_s
+      )
+
+    end
+
+
+  end
+
   def search(user, data)
-
     data_list = Array.new
-
     data.each do |temp|
       jan = temp[0]
       asin = temp[1]
@@ -76,9 +124,7 @@ class Product < ApplicationRecord
         p price.to_s
       end
     end
-
     Candidate.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert_candidate, columns: [:url, :title, :price, :memo, :attachment, :condition, :diff_new_price, :diff_used_price]}
-
   end
 
 end
