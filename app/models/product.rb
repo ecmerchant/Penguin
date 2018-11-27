@@ -53,6 +53,9 @@ class Product < ApplicationRecord
 
   def search(user, data)
     data_list = Array.new
+    perc = 0
+    counter = 0
+
     data.each do |temp|
       jan = temp[0]
       asin = temp[1]
@@ -69,6 +72,7 @@ class Product < ApplicationRecord
 
       product = Product.where(user: user, asin: asin)
       product.update(search_result: hit_num.to_s)
+
 
       targets.each do |target|
         item_page = target.at("a")[:href]
@@ -111,7 +115,9 @@ class Product < ApplicationRecord
         p item_id
         p title
         p price.to_s
+
       end
+
     end
     Candidate.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert_candidate, columns: [:url, :title, :price, :memo, :attachment, :condition, :diff_new_price, :diff_used_price]}
   end

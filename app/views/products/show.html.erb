@@ -94,7 +94,6 @@
       <br><br>
 
       <h5>商品データ <small>全<%= @products.count %>件</small><%= submit_tag 'データ取得', class:'btn btn-success', id:'search', style:'vertical-align:middle; margin-left:20px;' %> <%= submit_tag 'CSV出力', class:'btn btn-success', id:'csv_output', style:'vertical-align:middle; margin-left:20px;' %></h5>
-
       <%= paginate @products %>
       <table class="table table-striped table-hover table-bordered table-headerfixed ellipsis tablesorter" id="products_table">
         <thead class="thead-inverse">
