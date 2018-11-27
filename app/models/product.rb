@@ -48,10 +48,7 @@ class Product < ApplicationRecord
       tag.update(
         search_result: result.to_s
       )
-
     end
-
-
   end
 
   def search(user, data)
@@ -62,13 +59,10 @@ class Product < ApplicationRecord
       new_price = temp[2].to_f
       used_price = temp[3].to_f
       logger.debug("==== ACCESS ====")
-      url = "http://shop.kitamura.jp/used/list.html?f[]=k3&q=" + jan.to_s
+      url = "http://shop.kitamura.jp/used/list.html?limit=100&f[]=k3&q=" + jan.to_s
 
       agent = Mechanize.new
       page = agent.get(url)
-
-      logger.debug(url)
-      logger.debug(page.title)
 
       targets = page.search("dl.item-element.used-element")
       hit_num = targets.count
@@ -105,11 +99,6 @@ class Product < ApplicationRecord
             memo = row.at("td").inner_text
           end
         end
-
-        p condition
-        p attachment
-        p memo
-
         new_agent = nil
         new_page = nil
 
