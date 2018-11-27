@@ -79,8 +79,10 @@ class ProductsController < ApplicationController
         memos = params[:memo]
         labels = params[:label]
         checks = params[:check]
+        jans =  params[:jan]
         logger.debug(memos)
         logger.debug(labels)
+        logger.debug(jans)
         temp = Product.where(user: current_user.email)
         if checks != nil then
           checks.each do |key, value|
@@ -88,6 +90,7 @@ class ProductsController < ApplicationController
             if tid != 0 then
               tag = temp.find(tid)
               tag.update(
+                jan: jans[key],
                 memo: memos[key],
                 label: labels[key]
               )

@@ -75,6 +75,7 @@ gem 'jquery-turbolinks'
 gem 'redis'
 gem 'resque'
 gem 'daemons'
+gem 'redis'
 
 # gem for pagination
 gem 'kaminari'
