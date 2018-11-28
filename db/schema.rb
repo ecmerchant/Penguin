@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181126134855) do
+ActiveRecord::Schema.define(version: 20181128142706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20181126134855) do
     t.integer  "new_price_diff"
     t.integer  "used_price_diff"
     t.string   "label"
+    t.integer  "progress"
   end
 
   create_table "candidates", force: :cascade do |t|

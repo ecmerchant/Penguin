@@ -3,6 +3,7 @@ class Product < ApplicationRecord
   require 'typhoeus'
   require 'mechanize'
   require 'open-uri'
+  require 'redis'
 
   def reload(user)
     account = Account.find_by(user: user)
@@ -55,7 +56,12 @@ class Product < ApplicationRecord
     data_list = Array.new
     perc = 0
     counter = 0
-
+    total = data.count
+    account = Account.find_by(user: user)
+    account.update(
+      progress: counter
+    )
+    logger.debug(total)
     data.each do |temp|
       jan = temp[0]
       asin = temp[1]
@@ -72,7 +78,6 @@ class Product < ApplicationRecord
 
       product = Product.where(user: user, asin: asin)
       product.update(search_result: hit_num.to_s)
-
 
       targets.each do |target|
         item_page = target.at("a")[:href]
@@ -115,8 +120,16 @@ class Product < ApplicationRecord
         p item_id
         p title
         p price.to_s
-
+        break
       end
+
+      counter += 1
+      account.update(
+        progress: counter
+      )
+      perc = (counter * 100 / total).round(0)
+
+      #ActionCable.server.broadcast('progress:1', percent: perc)
 
     end
     Candidate.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert_candidate, columns: [:url, :title, :price, :memo, :attachment, :condition, :diff_new_price, :diff_used_price]}
