@@ -88,3 +88,6 @@ gem 'rubyXL'
 
 # gem for upsert
 gem 'activerecord-import'
+
+# gem for scheduler
+gem 'whenever'
