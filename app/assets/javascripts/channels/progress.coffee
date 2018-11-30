@@ -1,8 +1,6 @@
 App.progress = App.cable.subscriptions.create "ProgressChannel",
   connected: ->
     # Called when the subscription is ready for use on the server
-    @install()
-    @show()
 
   disconnected: ->
     # Called when the subscription has been terminated by the server
@@ -13,7 +11,6 @@ App.progress = App.cable.subscriptions.create "ProgressChannel",
     $('progress').prop('value', data.percent)
 
   show: ->
-    @perform('show', progress_id: 1)
+
 
   install: ->
-    $(document).on('page:change', -> App.progress.show())

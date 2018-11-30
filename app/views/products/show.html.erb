@@ -109,13 +109,15 @@
             <% if key.to_s == "self_sale" || key.to_s == "delta_link" %>
             <th width="8%"><%= value %></th>
             <% elsif key.to_s == "new_price" || key.to_s == "used_price" %>
-            <th width="5%"><%= value %></th>
+            <th width="6%"><%= value %></th>
             <% elsif key.to_s == "asin" %>
             <th width="8%"><%= value %></th>
             <% elsif key.to_s == "jan" %>
             <th width="9%"><%= value %></th>
             <% elsif key.to_s == "title" %>
             <th width="13%"><%= value %></th>
+            <% elsif key.to_s == "search_result" %>
+            <th width="5%"><%= value %></th>
             <% else %>
             <th width="7%"><%= value %></th>
             <% end %>
@@ -131,9 +133,11 @@
             <td width="3%"><a href="/candidates/show/<%= temp.asin %>">※</a></td>
             <% Constants::CONV_P.each do |key, value| %>
             <% if key.to_s == "self_sale" %>
-            <td width="8%"><%= temp[key] %></td>
-            <% elsif key.to_s == "new_price" || key.to_s == "used_price" %>
-            <td width="5%"><%= temp[key].to_i %></td>
+            <td width="8%"><% if temp[key] == true then %>〇<% else %>×<% end %></td>
+            <% elsif key.to_s == "new_price" %>
+            <td width="6%"><%= text_field_tag 'new_price[' + temp.id.to_s + ']', temp[key].to_i, class:'form-control', style:'color:black;font-size:12px;' %></td>
+            <% elsif key.to_s == "used_price" %>
+            <td width="6%"><%= text_field_tag 'used_price[' + temp.id.to_s + ']', temp[key].to_i, class:'form-control', style:'color:black;font-size:12px;' %></td>
             <% elsif key.to_s == "asin" %>
             <td width="8%"><a href="https://www.amazon.co.jp/dp/<%= temp[key] %>" target="_blank"><%= temp[key] %></a></td>
             <% elsif key.to_s == "title" %>
@@ -141,7 +145,7 @@
             <% elsif key.to_s == "jan" %>
             <td width="9%"><%= text_field_tag 'jan[' + temp.id.to_s + ']', temp[key].to_s, class:'form-control', style:'color:black;font-size:12px;' %></td>
             <% elsif key.to_s == "search_result" %>
-            <td width="7%"><a href="http://shop.kitamura.jp/used/list.html?f[]=k3&q=<%= temp["jan"] %>" target="_blank"><%= temp[key] %>件</a></td>
+            <td width="5%"><% if temp[key] != nil && temp[key] != "" then %><a href="http://shop.kitamura.jp/used/list.html?f[]=k3&q=<%= temp["jan"] %>" target="_blank"><%= temp[key] %>件</a><% else %>-<% end %></td>
             <% elsif key.to_s == "delta_link" %>
             <td width="8%"><a href="<%= temp[key] %>" target="_blank"><%= temp[key] %></a></td>
             <% elsif key.to_s == "memo" %>

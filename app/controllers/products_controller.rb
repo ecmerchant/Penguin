@@ -48,6 +48,7 @@ class ProductsController < ApplicationController
     if label_tag != "すべて" then
       temp = temp.where(label: label_tag)
     end
+    temp = temp.order("asin ASC")
     @products = temp.page(params[:page]).per(PER)
 
     @flg_A = false
@@ -80,6 +81,8 @@ class ProductsController < ApplicationController
         labels = params[:label]
         checks = params[:check]
         jans =  params[:jan]
+        new_prices =  params[:new_price]
+        used_prices =  params[:used_price]
         logger.debug(memos)
         logger.debug(labels)
         logger.debug(jans)
@@ -92,7 +95,9 @@ class ProductsController < ApplicationController
               tag.update(
                 jan: jans[key],
                 memo: memos[key],
-                label: labels[key]
+                label: labels[key],
+                new_price: new_prices[key],
+                used_price: used_prices[key]
               )
             end
           end
@@ -216,7 +221,7 @@ class ProductsController < ApplicationController
           workbook = RubyXL::Parser.parse(data.path)
           worksheet = workbook.first
           worksheet.each_with_index do |row, i|
-            if row[0].value == nil then break end
+            if row[0] == nil || row[0].value == "" then break end
             if i != 0 then
               logger.debug("---------------")
               asin = row[0].value.to_s

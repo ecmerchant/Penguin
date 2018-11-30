@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get 'accounts/setup'
   post 'accounts/setup'
   post 'accounts/update'
+  post 'accounts/edit'
 
   mount Resque::Server.new, at: "/resque"
 

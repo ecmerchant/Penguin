@@ -2,19 +2,16 @@
   <div class="row">
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
-      <h5>ツールの設定</h5>
       <div class="col-lg-5">
+        <h5>ツールの設定</h5>
         <%= form_for(@account, {url: accounts_setup_path, method: 'post'}) do |f| %>
           <div class="form-group">
             <%= f.label :shop_url, "アマゾンURL" %>
             <%= f.text_field :shop_url, class: 'form-control' %>
           </div>
-          <div class="form-group">
-            <%= f.label :patrol_time, "巡回時間" %><br>
-            <%= f.time_select :patrol_time, {minute_step:60}, {class: 'form-control', style: "display: inline-block; width: auto;"} %>
-          </div>
           <div class="actions">
             <%= f.submit "設定", {id: "setup_btn", class: 'btn btn-primary'} %>
+            <%= f.submit "ASIN取得", {id: "get_asin_btn", class: 'btn btn-info', style: 'margin-left:30px;'} %>
           </div>
         <% end %>
         <br>
@@ -50,8 +47,28 @@
             <% end %>
           </tbody>
         </table>
+      </div>
+      <div class="col-lg-12"><br></div>
 
-        </div>
+      <div class="col-lg-5">
+        <h5>アカウントの設定</h5>
+        <%= form_for(@user, {url: accounts_edit_path, method: 'post'}) do |f| %>
+          <div class="form-group">
+            <%= f.label :password, "新しいパスワード" %>
+            <%= f.password_field :password, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= f.label :password_confirmation, "新しいパスワード（確認用）" %>
+            <%= f.password_field :password_confirmation, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= f.label :current_password, "現在のパスワード" %>
+            <%= f.password_field :current_password, class: 'form-control' %>
+          </div>
+          <div class="actions">
+            <%= f.submit "設定", {id: "edit_btn", class: 'btn btn-primary'} %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
