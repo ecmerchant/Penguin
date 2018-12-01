@@ -224,13 +224,25 @@ class ProductsController < ApplicationController
             if row[0] == nil || row[0].value == "" then break end
             if i != 0 then
               logger.debug("---------------")
-              asin = row[0].value.to_s
-              title = row[1].value.to_s
-              used_price = row[2].value.to_f
-              new_price = row[3].value.to_f
-              jan = row[4].value.to_s
-              sales = row[5].value.to_i
-
+              if row[0] != nil then
+                asin = row[0].value.to_s
+              end
+              if row[1] != nil then
+                title = row[1].value.to_s
+              end
+              if row[2] != nil then
+                used_price = row[2].value.to_f
+              end
+              if row[3] != nil then
+                new_price = row[3].value.to_f
+              end
+              if row[4] != nil then
+                jan = row[4].value.to_s
+              end
+              if row[5] != nil then
+                sales = row[5].value.to_i
+              end
+    
               delta_link = "https://delta-tracer.com/item/detail/jp/" + asin
 
               data_list << Product.new(user: user, asin: asin, title: title, new_price: new_price, used_price: used_price, jan: jan, sales: sales, delta_link: delta_link)
