@@ -41,12 +41,9 @@ class AccountsController < ApplicationController
       if params[:commit] == "設定" then
         res = params[:account]
         shop_url = res[:shop_url]
-        patrol_time = Time.zone.local(res["patrol_time(1i)"].to_i, res["patrol_time(2i)"].to_i, res["patrol_time(3i)"].to_i, res["patrol_time(4i)"].to_i, res["patrol_time(5i)"].to_i)
-        logger.debug(shop_url)
-        logger.debug(patrol_time)
+
         @account.update(
-          shop_url: shop_url,
-          patrol_time: patrol_time
+          shop_url: shop_url
         )
       elsif params[:commit] == "更新" then
         res = params[:label]
