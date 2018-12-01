@@ -6,15 +6,15 @@
         <thead class="thead-inverse">
           <tr>
             <% Constants::CONV_P.each do |key, value| %>
-            <% if key.to_s == "self_sale" || key.to_s == "delta_link" %>
+            <% if key.to_s == "self_sale" || key.to_s == "delta_link" then %>
             <th width="8%"><%= value %></th>
-            <% elsif key.to_s == "new_price" || key.to_s == "used_price" %>
+            <% elsif key.to_s == "new_price" || key.to_s == "used_price" then %>
             <th width="5%"><%= value %></th>
-            <% elsif key.to_s == "asin" %>
+            <% elsif key.to_s == "asin" then %>
             <th width="8%"><%= value %></th>
-            <% elsif key.to_s == "jan" %>
+            <% elsif key.to_s == "jan" then %>
             <th width="8%"><%= value %></th>
-            <% elsif key.to_s == "title" %>
+            <% elsif key.to_s == "title" then %>
             <th width="13%"><%= value %></th>
             <% else %>
             <th width="9%"><%= value %></th>
@@ -27,8 +27,10 @@
           <% @amazon.each do |temp| %>
           <tr>
             <% Constants::CONV_P.each do |key, value| %>
-            <% if key.to_s == "self_sale" || key.to_s == "delta_link" %>
+            <% if key.to_s == "delta_link" %>
             <td width="8%"><%= temp[key] %></td>
+            <% elsif key.to_s == "self_sale" %>
+            <td width="8%"><% if temp[key] == true then %>〇<% else %>×<% end %></td>
             <% elsif key.to_s == "new_price" || key.to_s == "used_price" %>
             <td width="5%"><%= temp[key].to_i %></td>
             <% elsif key.to_s == "asin" %>
