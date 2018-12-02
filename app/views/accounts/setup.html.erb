@@ -69,6 +69,17 @@
             <%= f.submit "設定", {id: "edit_btn", class: 'btn btn-primary'} %>
           </div>
         <% end %>
+        <br>
+        <h5>データの全削除</h5>
+        <%= form_for(@user, {url: accounts_delete_path, method: 'post'}) do |f| %>
+          <div class="form-group">
+            <%= f.label :current_password, "現在のパスワード" %>
+            <%= f.password_field :current_password, class: 'form-control' %>
+          </div>
+          <div class="actions">
+            <%= f.submit "全削除", {id: "delete_btn", class: 'btn btn-danger'} %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

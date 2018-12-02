@@ -9,6 +9,22 @@ class AccountsController < ApplicationController
     redirect_to root_url, :alert => exception.message
   end
 
+  def delete
+    if request.post? then
+      password = params[:current_password]
+      user = User.find_by(email: current_user.email)
+      if user.valid_password?(params[:user][:current_password]) then
+        logger.debug("PASSWORD VALID")
+        Product.where(user: current_user.email).delete_all
+        Candidate.where(user: current_user.email).delete_all
+        Account.find_by(user: current_user.email).update(
+          progress: 0
+        )
+      end
+    end
+    redirect_to products_show_path
+  end
+
   def edit
     if request.post? then
       current_user.update_with_password(
