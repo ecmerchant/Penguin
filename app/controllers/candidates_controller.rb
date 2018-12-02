@@ -126,8 +126,7 @@ class CandidatesController < ApplicationController
           new_price_diff: diff_new_price,
           used_price_diff: diff_used_price
         )
-
-        Product.new.reload(current_user.email)
+        #Product.new.reload(current_user.email)
       end
       redirect_to request.referer
     end
