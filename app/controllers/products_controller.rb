@@ -270,6 +270,9 @@ class ProductsController < ApplicationController
           end
           Product.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert, columns: [:title, :new_price, :used_price, :jan, :sales, :delta_link]}
           data_list = nil
+          targets = Product.where(user: current_user.email)
+          data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
+          ProductPatrolJob.perform_later(current_user.email, data)
         end
       end
     end

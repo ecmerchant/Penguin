@@ -9,6 +9,10 @@
             <%= f.label :shop_url, "アマゾンURL" %>
             <%= f.text_field :shop_url, class: 'form-control' %>
           </div>
+          <div class="form-group">
+            <%= f.label :patrol_time, "巡回時間" %><br>
+            <%= f.time_select :patrol_time, {minute_step:60}, {class: 'form-control', style: "display: inline-block; width: auto;"} %>
+          </div>
           <div class="actions">
             <%= f.submit "設定", {id: "setup_btn", class: 'btn btn-primary'} %>
             <%= f.submit "ASIN取得", {id: "get_asin_btn", class: 'btn btn-info', style: 'margin-left:30px;'} %>
