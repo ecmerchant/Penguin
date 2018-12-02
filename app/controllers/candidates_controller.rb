@@ -12,14 +12,38 @@ class CandidatesController < ApplicationController
     @login_user = current_user
     asin = params[:asin]
     logger.debug(asin)
-    @details = Candidate.where(user: current_user.email)
-    temp = @details.where(asin: asin, filtered: false)
-    @products = temp
+
     @amazon = Product.where(user: current_user.email, asin: asin)
     @labels = Label.where(user: current_user.email).pluck(:caption)
     @labels_add = @labels.push("すべて")
 
     @account = Account.find_or_create_by(user: current_user.email)
+
+    border_condition = @account.condition
+    border_attachment = @account.attachment
+    border_new_price = @account.new_price_diff.to_i
+    border_used_price = @account.used_price_diff.to_i
+
+    temp2 = Candidate.where(user: current_user.email)
+
+    if border_condition == "A以上" then
+      temp2 = temp2.where("condition like ?", "%A(美品)%")
+    elsif border_condition == "AB以上" then
+      temp2 = temp2.where("condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%")
+    elsif border_condition == "B以上" then
+      temp2 = temp2.where("condition like ? OR condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%", "%B(並品)%")
+    end
+
+    if border_attachment == true then
+      temp2 = temp2.where("attachment like ? OR attachment like ?", "%箱%", "%説明書%")
+    end
+
+    temp2 = temp2.where("diff_new_price >= ?", border_new_price)
+    temp2 = temp2.where("diff_used_price >= ?", border_used_price)
+
+    @details = temp2.where(user: current_user.email)
+    temp = @details.where(asin: asin)
+    @products = temp
 
     @flg_A = false
     @flg_AB = false

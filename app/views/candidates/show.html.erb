@@ -45,7 +45,7 @@
             <% elsif key.to_s == "jan" then %>
             <td width="8%"><%= text_field_tag 'jan[' + temp.id.to_s + ']', temp[key].to_s, class:'form-control', style:'color:black;font-size:12px;' %></td>
             <% elsif key.to_s == "search_result" %>
-            <td width="7%"><% if temp[key] != nil && temp[key] != "" then %><a href="http://shop.kitamura.jp/used/list.html?f[]=k3&limit=100&n7c=1&q=<%= temp["jan"] %>" target="_blank"><%= temp[key] %></a><% else %>0<% end %></td>
+            <td width="7%"><% if temp[key] != nil && temp[key] != "" then %><a href="http://shop.kitamura.jp/used/list.html?f[]=k3&limit=100&n7c=1&q=<%= temp["jan"] %>" target="_blank"><%= @products.count %></a><% else %>0<% end %></td>
             <% elsif key.to_s == "memo" then %>
             <td width="9%"><%= text_field_tag 'memo[' + temp.id.to_s + ']', temp.memo.to_s, class:'form-control', style:'color:black;font-size:12px;'  %></td>
             <% elsif key.to_s == "label" then %>
