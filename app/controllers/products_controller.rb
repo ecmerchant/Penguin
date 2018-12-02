@@ -38,7 +38,6 @@ class ProductsController < ApplicationController
 
   def show
     @login_user = current_user
-
     @labels = Label.where(user: current_user.email).pluck(:caption)
     @labels_add = @labels.push("すべて")
     @account = Account.find_or_create_by(user: current_user.email)
@@ -48,8 +47,9 @@ class ProductsController < ApplicationController
     if label_tag != "すべて" then
       temp = temp.where(label: label_tag)
     end
-    temp = temp.order("asin ASC")
-    @products = temp.page(params[:page]).per(PER)
+    temp = temp.order("search_result DESC NULLS LAST")
+    @total = temp.count
+    @products = temp.page(params[:page]).per(PER).order("search_result DESC NULLS LAST")
 
     @flg_A = false
     @flg_AB = false
@@ -178,6 +178,10 @@ class ProductsController < ApplicationController
         end
       elsif commit == "データ取得" then
         checks = params[:check]
+        account = Account.find_by(user: current_user.email)
+        account.update(
+          progress: 0
+        )
         if checks != nil then
           temp = Product.where(user: current_user.email)
           ids = Array.new
@@ -211,6 +215,10 @@ class ProductsController < ApplicationController
   def import
     user = current_user.email
     if request.post? then
+      account = Account.find_by(user: user)
+      account.update(
+        progress: 0
+      )
       data = params[:amazon_data]
       if data != nil then
         ext = File.extname(data.path)
@@ -223,7 +231,6 @@ class ProductsController < ApplicationController
           worksheet.each_with_index do |row, i|
             if row[0] == nil || row[0].value == "" then break end
             if i != 0 then
-              logger.debug("---------------")
               if row[0] != nil then
                 asin = row[0].value.to_s
               end
@@ -242,9 +249,7 @@ class ProductsController < ApplicationController
               if row[5] != nil then
                 sales = row[5].value.to_i
               end
-    
               delta_link = "https://delta-tracer.com/item/detail/jp/" + asin
-
               data_list << Product.new(user: user, asin: asin, title: title, new_price: new_price, used_price: used_price, jan: jan, sales: sales, delta_link: delta_link)
             end
           end

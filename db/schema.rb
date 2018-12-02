@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181128142706) do
+ActiveRecord::Schema.define(version: 20181202013555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,11 +40,11 @@ ActiveRecord::Schema.define(version: 20181128142706) do
     t.float    "diff_new_price"
     t.float    "diff_used_price"
     t.string   "url"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.string   "user"
     t.string   "item_id"
-    t.boolean  "filtered"
+    t.boolean  "filtered",        default: false, null: false
     t.index ["user", "asin", "item_id"], name: "for_upsert_candidate", unique: true, using: :btree
   end
 
@@ -64,14 +64,14 @@ ActiveRecord::Schema.define(version: 20181128142706) do
     t.float    "used_price"
     t.integer  "sales"
     t.boolean  "self_sale"
-    t.string   "search_result"
     t.text     "memo"
     t.string   "label"
     t.string   "delta_link"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.string   "user"
-    t.boolean  "filtered"
+    t.boolean  "filtered",      default: false, null: false
+    t.integer  "search_result"
     t.index ["user", "asin"], name: "for_upsert", unique: true, using: :btree
   end
 

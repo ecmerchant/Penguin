@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   root to: 'products#show'
 
   get 'candidates/show'
+  post 'candidates/show'
   get 'candidates/show/:asin', to: 'candidates#show'
 
   get 'products/search'

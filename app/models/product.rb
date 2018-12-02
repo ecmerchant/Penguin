@@ -17,14 +17,12 @@ class Product < ApplicationRecord
     border_used_price = account.used_price_diff.to_i
 
     targets = Product.where(user: user)
+    candidates = Candidate.where(user: user)
+    candidates.update(filtered: true)
 
     targets.each do |tag|
       asin = tag.asin
-      temp = Candidate.where(user: user, asin: asin)
-
-      temp.update(
-        filtered: true
-      )
+      temp = candidates.where(asin: asin)
 
       if border_condition == "A以上" then
         temp = temp.where("condition like ?", "%A(美品)%")
@@ -41,13 +39,16 @@ class Product < ApplicationRecord
       temp = temp.where("diff_new_price >= ?", border_new_price)
       temp = temp.where("diff_used_price >= ?", border_used_price)
 
-      temp.update(
-        filtered: false
-      )
+      data_list = Array.new
+      temp.each do |ts|
+        data_list << Candidate.new(user: user, asin: asin, item_id: ts.item_id, filtered: false)
+      end
+      Candidate.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert_candidate, columns: [:filtered]}
+      data_list = nil
 
       result = temp.count
       tag.update(
-        search_result: result.to_s
+        search_result: result.to_i
       )
     end
   end
@@ -61,6 +62,9 @@ class Product < ApplicationRecord
     account.update(
       progress: counter
     )
+    product = Product.where(user: user)
+    candidates = Candidate.where(user: user)
+
     logger.debug(total)
     data.each do |temp|
       jan = temp[0]
@@ -68,17 +72,15 @@ class Product < ApplicationRecord
       new_price = temp[2].to_f
       used_price = temp[3].to_f
       logger.debug("==== ACCESS ====")
-      url = "http://shop.kitamura.jp/used/list.html?limit=100&f[]=k3&q=" + jan.to_s
-
+      url = "http://shop.kitamura.jp/used/list.html?limit=100&f[]=k3&n7c=1&q=" + jan.to_s
+      logger.debug(url)
       agent = Mechanize.new
       page = agent.get(url)
 
       targets = page.search("dl.item-element.used-element")
       hit_num = targets.count
-
-      product = Product.where(user: user, asin: asin)
-      product.update(search_result: hit_num.to_s)
-
+      logger.debug(hit_num)
+      data_list = Array.new
       targets.each do |target|
         item_page = target.at("a")[:href]
         item_page = "http://shop.kitamura.jp" + item_page
@@ -86,53 +88,54 @@ class Product < ApplicationRecord
         title = target.at("dd.omission a").inner_text
         price = target.at("span.red").inner_text
         price = price.gsub("¥","").gsub(",","").to_f
+        logger.debug("=== ITEM ===")
+        logger.debug(item_page)
 
-        new_agent = Mechanize.new
-        new_page = new_agent.get(item_page)
+        judge = candidates.find_by(asin: asin, item_id: item_id)
 
-        temp = new_page.at("table.used-spec")
-        specs = temp.search("tr")
+        if judge == nil then
+          logger.debug("==== NEW ITEM ====")
+          new_agent = Mechanize.new
+          new_page = new_agent.get(item_page)
 
-        condition = nil
-        attachment = nil
-        memo = nil
+          temp = new_page.at("table.used-spec")
+          specs = temp.search("tr")
 
-        specs.each do |row|
-          thead = row.at("th").inner_text
-          if thead == "状態" then
-            condition = row.at("td").inner_text
-            condition = condition.gsub("商品の状態について", "")
-          elsif thead == "付属品" then
-            attachment = row.at("td").inner_text
-          elsif thead == "備考" then
-            memo = row.at("td").inner_text
+          condition = nil
+          attachment = nil
+          memo = nil
+
+          specs.each do |row|
+            thead = row.at("th").inner_text
+            if thead == "状態" then
+              condition = row.at("td").inner_text
+              condition = condition.gsub("商品の状態について", "")
+            elsif thead == "付属品" then
+              attachment = row.at("td").inner_text
+            elsif thead == "備考" then
+              memo = row.at("td").inner_text
+            end
           end
+          new_agent = nil
+          new_page = nil
+
+          diff_new_price = new_price - price
+          diff_used_price = used_price - price
+
+          data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price, diff_used_price: diff_used_price)
         end
-        new_agent = nil
-        new_page = nil
-
-        diff_new_price = new_price - price
-        diff_used_price = used_price - price
-
-        data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price, diff_used_price: diff_used_price)
-
-        p item_page
-        p item_id
-        p title
-        p price.to_s
-        break
       end
+      Candidate.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert_candidate, columns: [:url, :title, :price, :memo, :attachment, :condition, :diff_new_price, :diff_used_price]}
+      temp = product.where(asin: asin)
+      temp.update(search_result: hit_num.to_i)
 
       counter += 1
       account.update(
         progress: counter
       )
-      perc = (counter * 100 / total).round(0)
-
-      #ActionCable.server.broadcast('progress:1', percent: perc)
+      data_list = nil
 
     end
-    Candidate.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert_candidate, columns: [:url, :title, :price, :memo, :attachment, :condition, :diff_new_price, :diff_used_price]}
   end
 
 end
