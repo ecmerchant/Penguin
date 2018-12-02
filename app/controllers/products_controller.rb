@@ -58,45 +58,36 @@ class ProductsController < ApplicationController
 
     temp2 = Candidate.where(user: current_user.email)
 
-    if border_condition == "A以上" then
-      temp2 = temp2.where("condition like ?", "%A(美品)%")
-    elsif border_condition == "AB以上" then
-      temp2 = temp2.where("condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%")
-    elsif border_condition == "B以上" then
-      temp2 = temp2.where("condition like ? OR condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%", "%B(並品)%")
-    end
-
-    if border_attachment == true then
-      temp2 = temp2.where("attachment like ? OR attachment like ?", "%箱%", "%説明書%")
-    end
-
-    temp2 = temp2.where("diff_new_price >= ?", border_new_price)
-    temp2 = temp2.where("diff_used_price >= ?", border_used_price)
-
-    @candidates = temp2
-
     @flg_A = false
     @flg_AB = false
     @flg_B = false
     @flg_ALL = false
+    @flg_new = @account.new_price_diff.to_i
+    @flg_used = @account.used_price_diff.to_i
 
-    if @account.condition == "A以上" then
+    if border_condition == "A以上" then
+      temp2 = temp2.where("condition like ?", "%A(美品)%")
       @flg_A = true
-    elsif @account.condition == "AB以上" then
+    elsif border_condition == "AB以上" then
+      temp2 = temp2.where("condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%")
       @flg_AB = true
-    elsif @account.condition == "B以上" then
+    elsif border_condition == "B以上" then
       @flg_B = true
-    elsif @account.condition == "全て" then
+      temp2 = temp2.where("condition like ? OR condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%", "%B(並品)%")
+    else
       @flg_ALL = true
     end
 
-    if @account.attachment == "true" then
+    if border_attachment == "true" then
+      temp2 = temp2.where("attachment like ? OR attachment like ?", "%箱%", "%説明書%")
       @flg_at = true
     else
       @flg_at = false
     end
-    @flg_new = @account.new_price_diff.to_i
-    @flg_used = @account.used_price_diff.to_i
+
+    temp2 = temp2.where("diff_new_price >= ?", border_new_price)
+    temp2 = temp2.where("diff_used_price >= ?", border_used_price)
+    @candidates = temp2
 
     if request.post? then
       commit = params[:commit]

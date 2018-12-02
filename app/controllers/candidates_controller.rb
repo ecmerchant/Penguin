@@ -19,6 +19,13 @@ class CandidatesController < ApplicationController
 
     @account = Account.find_or_create_by(user: current_user.email)
 
+    @flg_A = false
+    @flg_AB = false
+    @flg_B = false
+    @flg_ALL = false
+    @flg_new = @account.new_price_diff.to_i
+    @flg_used = @account.used_price_diff.to_i
+
     border_condition = @account.condition
     border_attachment = @account.attachment
     border_new_price = @account.new_price_diff.to_i
@@ -28,14 +35,22 @@ class CandidatesController < ApplicationController
 
     if border_condition == "A以上" then
       temp2 = temp2.where("condition like ?", "%A(美品)%")
+      @flg_A = true
     elsif border_condition == "AB以上" then
       temp2 = temp2.where("condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%")
+      @flg_AB = true
     elsif border_condition == "B以上" then
       temp2 = temp2.where("condition like ? OR condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%", "%B(並品)%")
+      @flg_B = true
+    else
+      @flg_ALL = true
     end
 
-    if border_attachment == true then
+    if border_attachment == "true" then
       temp2 = temp2.where("attachment like ? OR attachment like ?", "%箱%", "%説明書%")
+      @flg_at = true
+    else
+      @flg_at = false
     end
 
     temp2 = temp2.where("diff_new_price >= ?", border_new_price)
@@ -44,25 +59,6 @@ class CandidatesController < ApplicationController
     @details = temp2.where(user: current_user.email)
     temp = @details.where(asin: asin)
     @products = temp
-
-    @flg_A = false
-    @flg_AB = false
-    @flg_B = false
-    @flg_ALL = false
-
-    if @account.condition == "A以上" then
-      @flg_A = true
-    elsif @account.condition == "AB以上" then
-      @flg_AB = true
-    elsif @account.condition == "B以上" then
-      @flg_B = true
-    elsif @account.condition == "全て" then
-      @flg_ALL = true
-    end
-
-    @flg_at = @account.attachment
-    @flg_new = @account.new_price_diff.to_i
-    @flg_used = @account.used_price_diff.to_i
 
     if request.post? then
       logger.debug(request.referer)
@@ -110,6 +106,8 @@ class CandidatesController < ApplicationController
           condition = cond[key]
         end
         attach = params[:attachment]
+        logger.debug("params")
+        logger.debug(attach)
 
         if attach == "true" then
           attach = "true"
