@@ -105,34 +105,39 @@ class Product < ApplicationRecord
 
         if judge == nil then
           logger.debug("==== NEW ITEM ====")
-          new_agent = Mechanize.new
-          new_page = new_agent.get(item_page)
 
-          temp = new_page.at("table.used-spec")
-          specs = temp.search("tr")
+          begin
+            new_agent = Mechanize.new
+            new_page = new_agent.get(item_page)
 
-          condition = nil
-          attachment = nil
-          memo = nil
+            temp = new_page.at("table.used-spec")
+            specs = temp.search("tr")
 
-          specs.each do |row|
-            thead = row.at("th").inner_text
-            if thead == "状態" then
-              condition = row.at("td").inner_text
-              condition = condition.gsub("商品の状態について", "")
-            elsif thead == "付属品" then
-              attachment = row.at("td").inner_text
-            elsif thead == "備考" then
-              memo = row.at("td").inner_text
+            condition = nil
+            attachment = nil
+            memo = nil
+
+            specs.each do |row|
+              thead = row.at("th").inner_text
+              if thead == "状態" then
+                condition = row.at("td").inner_text
+                condition = condition.gsub("商品の状態について", "")
+              elsif thead == "付属品" then
+                attachment = row.at("td").inner_text
+              elsif thead == "備考" then
+                memo = row.at("td").inner_text
+              end
             end
+            new_agent = nil
+            new_page = nil
+
+            diff_new_price = new_price - price
+            diff_used_price = used_price - price
+
+            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price, diff_used_price: diff_used_price)
+          rescue => e
+            logger.debug(e)
           end
-          new_agent = nil
-          new_page = nil
-
-          diff_new_price = new_price - price
-          diff_used_price = used_price - price
-
-          data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price, diff_used_price: diff_used_price)
         end
       end
       Candidate.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert_candidate, columns: [:url, :title, :price, :memo, :attachment, :condition, :diff_new_price, :diff_used_price]}
