@@ -131,10 +131,10 @@ class Product < ApplicationRecord
             new_agent = nil
             new_page = nil
 
-            diff_new_price = new_price - price
-            diff_used_price = used_price - price
+            diff_new_price = (0.85 * new_price.to_f).round(0) - price
+            diff_used_price = (0.85 * used_price.to_f).round(0) - price
 
-            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price, diff_used_price: diff_used_price)
+            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price.to_i, diff_used_price: diff_used_price.to_i)
           rescue => e
             logger.debug(e)
           end

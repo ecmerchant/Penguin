@@ -12,7 +12,7 @@ module Penguin
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     config.time_zone = 'Tokyo'
-    config.active_record.default_timezone = :local
+    config.active_record.default_timezone = 'Tokyo'
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
     config.eager_load_paths += Dir["#{config.root}/lib/**/"]
   end
