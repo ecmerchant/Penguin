@@ -154,7 +154,7 @@
             <% elsif key.to_s == "label" then %>
             <td width="7%"><%= select_tag 'label[' + temp.id.to_s + ']', options_for_select(@labels, :selected => temp.label), class: 'form-control', style:'font-size:10px; color:black;' %></td>
             <% elsif key.to_s == "updated_at" then %>
-            <td width="7%" style="word-wrap: break-word; white-space: normal;"><% if temp.updated_at != nil then temp[key].strftime("%Y/%m/%d %H:%M") else %>111<% end %></td>
+            <td width="7%" style="word-wrap: break-word; white-space: normal;"><% if temp.updated_at != nil then %><%= temp.updated_at.strftime("%Y/%m/%d %H:%M") %><% end %></td>
             <% else %>
             <td width="7%" style="word-wrap: break-word; white-space: normal;"><%= temp[key] %></td>
             <% end %>
