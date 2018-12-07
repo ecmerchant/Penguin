@@ -74,6 +74,11 @@
           </div>
         <% end %>
         <br>
+        <h5>登録用CSVのダウンロード</h5>
+        <%= form_tag('/accounts/download', method: 'post') do %>
+            <%= submit_tag "ダウンロード", {class: 'btn btn-info'} %>
+        <% end %>
+        <br>
         <h5>データの全削除</h5>
         <%= form_for(@user, {url: accounts_delete_path, method: 'post'}) do |f| %>
           <div class="form-group">

@@ -25,6 +25,20 @@ class AccountsController < ApplicationController
     redirect_to products_show_path
   end
 
+  def download
+    if request.post? then
+      bom = "\uFEFF"
+      output = CSV.generate(bom) do |csv|
+        header = ["ASIN", "商品名", "新品価格", "中古価格", "JAN", "売れ行き"]
+        csv << header
+      end
+      fname = "登録用データ.csv"
+      send_data(output, filename: fname, type: :csv)
+    else
+      redirect_to accounts_setup_path
+    end
+  end
+
   def edit
     if request.post? then
       current_user.update_with_password(

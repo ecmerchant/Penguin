@@ -253,10 +253,10 @@ class ProductsController < ApplicationController
                 title = row[1].value.to_s
               end
               if row[2] != nil then
-                used_price = row[2].value.to_f
+                new_price = row[2].value.to_f
               end
               if row[3] != nil then
-                new_price = row[3].value.to_f
+                used_price = row[3].value.to_f
               end
               if row[4] != nil then
                 jan = row[4].value.to_s
