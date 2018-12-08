@@ -1,50 +1,25 @@
 <div class="page-header" id="banner">
   <div class="row">
     <div class="col-lg-12">
-      <h5>商品管理</h5>
-      <div class="col-lg-3">
-      <%= form_tag('/products/import', method:'post', multipart: true, id:'amazon_import') do %>
-        <div class="form-inline">
-          <label style="vertical-align:middle;">アマゾンデータの取込み</label>
-          <label style="vertical-align:middle; margin-left:20px;">
-          <span class="btn btn-info">
-            インポート
-            <input type="file" name="amazon_data" onChange="$('#amazon_import').submit();" style="display:none;">
-          </span>
-          </label>
-        </div>
-      <% end %>
-      </div>
-      <%= form_tag('/accounts/update', method:'post', id:'update_account') do %>
-      <div class="col-lg-3">
-        <div class="form-inline">
-        <label style="vertical-align:middle; margin-right:5px;">ラベルで絞込み</label>
-        <%= select_tag 'label', options_for_select(@labels, :selected => @account.label), class: 'form-control', style:'font-size:12px; color:black;width:40%;' %>
-        <%= submit_tag '更新', class:'btn btn-success', style:'vertical-align:middle; margin-left:10px;' %>
-        </div>
-      </div>
-      <% end %>
-      <%= form_tag('/products/show', method:'post', id:'update_form') do %>
-      <div class="col-lg-4">
-        <label>商品データの更新</label>
-        <%= submit_tag '更新', class:'btn btn-success', style:'vertical-align:middle; margin-left:20px;' %>
-        <%= submit_tag '削除', class:'btn btn-danger', style:'vertical-align:middle; margin-left:20px;' %>
-        <label style='vertical-align:middle; margin-left:20px;' >全選択</label>
-        <input type="checkbox" name="check[all]" id="check_all"/>
-      </div>
-      <div class="col-lg-2">
-      </div>
+      <h5>DB表示設定</h5>
       <div class="col-lg-12">
-        <label>フィルタの設定</label>
-        <%= submit_tag '適用', class:'btn btn-success', style:'vertical-align:middle; margin-left:20px;' %>
-        <%= link_to "クリア", products_clear_path, class:'btn btn-warning', style:'vertical-align:middle; margin-left:20px;' %><br>
-        <table class="table table-striped table-hover table-bordered" style="margin-top:5px;" >
+        <%= form_tag('/products/show', method:'post', id:'update_form') do %>
+        <label>条件の絞込み</label>
+        <%= submit_tag '抽出', class:'btn btn-success', style:'vertical-align:middle; margin-left:20px; width:120px;' %>
+        <%= link_to "クリア", products_clear_path, class:'btn btn-warning', style:'vertical-align:middle; margin-left:20px; width:120px;' %><br>
+      </div>
+      <div class="col-lg-1">
+        <label for="filter_table">抽出条件</label>
+      </div>
+      <div class="col-lg-11">
+        <table class="table table-striped table-hover table-bordered" style="margin-top:5px;" id="filter_table" >
           <thead>
             <tr>
-              <th width="25%">商品状態で抽出</th>
-              <th width="25%">付属品で抽出</th>
-              <th width="25%">新品価格差で抽出</th>
-              <th width="25%">中古価格差で抽出</th>
+              <th width="25%">商品状態</th>
+              <th width="25%">付属品</th>
+              <th width="17%">新品価格差</th>
+              <th width="17%">中古価格差</th>
+              <th width="16%">ラベル</th>
             </tr>
           </thead>
           <tbody>
@@ -89,19 +64,43 @@
                   </label>
                 </div>
               </td>
+              <td>
+                <div class="form-inline">
+                  <%= select_tag 'select_label', options_for_select(@labels, :selected => @account.label), class: 'form-control', style:'font-size:12px; color:black;width:80%;' %>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
+        <% end %>
       </div>
-      <br><br>
-      </div>
+      <h5>DB管理</h5>
       <div class="col-lg-12">
-      <h5>商品データ <small>全<%= @total %>件</small><%= submit_tag 'データ取得', class:'btn btn-success', id:'search', style:'vertical-align:middle; margin-left:20px;' %> <%= submit_tag 'CSV出力', class:'btn btn-success', id:'csv_output', style:'vertical-align:middle; margin-left:20px;' %></h5>
-
-      <div>商品データの取得状況　全<%= @total %>件中　<%= @account.progress.to_i %>件済み</div>
+        <%= form_tag('/products/import', method:'post', multipart: true, id:'amazon_import') do %>
+          <div class="form-inline">
+            <label style="vertical-align:middle;">
+            <span class="btn btn-info" style="width:160px;">
+              一括登録・更新
+              <input type="file" name="amazon_data" onChange="$('#amazon_import').submit();" style="display:none;">
+            </span>
+            </label>
+          </div>
+        <% end %>
+      </div>
+      <%= form_tag('/products/show', method:'post', id:'update_form2') do %>
+      <div class="col-lg-12">
+        <%= submit_tag 'キタムラ情報取得', class:'btn btn-success', id:'search', style:'vertical-align:middle; margin-left:0px; width:160px;' %>
+        <%= submit_tag 'CSV出力', class:'btn btn-warning', id:'csv_output', style:'vertical-align:middle; margin-left:20px; width:160px;' %>
+        <%= submit_tag 'DB編集内容の更新', class:'btn btn-success', style:'vertical-align:middle; margin-left:20px; width:160px;' %>
+        <%= submit_tag 'データの削除', class:'btn btn-danger', style:'vertical-align:middle; margin-left:20px; width:160px;' %>
+        <br><br>
+      </div>
+      <br>
+      <label>キタムラ情報の取得状況　全<%= @total %>件中　<%= @account.progress.to_i %>件済み</label>
       <progress class="progress progress-striped" max="100" value="<%= if @products.count != 0 then (@account.progress.to_i * 100 / @total).round(0) else 0 end %>" style="width:50%;"></progress>
-
       <%= paginate @products %>
+      <br><label style='vertical-align:middle;' >全選択</label>
+      <input type="checkbox" name="check[all]" id="check_all"/>
       <table class="table table-striped table-hover table-bordered table-headerfixed ellipsis tablesorter" id="products_table">
         <thead class="thead-inverse">
           <tr>

@@ -45,7 +45,6 @@ class ProductsController < ApplicationController
     border_attachment = @account.attachment
     border_new_price = @account.new_price_diff.to_i
     border_used_price = @account.used_price_diff.to_i
-
     label_tag = @account.label
     temp = Product.where(user: current_user.email)
     if label_tag != "すべて" then
@@ -91,7 +90,7 @@ class ProductsController < ApplicationController
 
     if request.post? then
       commit = params[:commit]
-      if commit == "更新" then
+      if commit == "DB編集内容の更新" then
         memos = params[:memo]
         labels = params[:label]
         checks = params[:check]
@@ -118,7 +117,7 @@ class ProductsController < ApplicationController
           end
         end
         redirect_to products_show_path
-      elsif commit == "削除" then
+      elsif commit == "データの削除" then
         checks = params[:check]
         if checks != nil then
           temp = Product.where(user: current_user.email)
@@ -130,7 +129,7 @@ class ProductsController < ApplicationController
           end
         end
         redirect_to products_show_path
-      elsif commit == "適用" then
+      elsif commit == "抽出" then
         cond = params[:condition]
         if cond != nil then
           key = cond.keys[0]
@@ -147,11 +146,14 @@ class ProductsController < ApplicationController
         diff_new_price = params[:diff_new_price].to_i
         diff_used_price = params[:diff_used_price].to_i
 
+        label = params[:select_label]
+
         @account.update(
           condition: condition,
           attachment: attach,
           new_price_diff: diff_new_price,
-          used_price_diff: diff_used_price
+          used_price_diff: diff_used_price,
+          label: label
         )
 
         #Product.new.reload(current_user.email)
@@ -191,7 +193,7 @@ class ProductsController < ApplicationController
         else
           redirect_to products_show_path
         end
-      elsif commit == "データ取得" then
+      elsif commit == "キタムラ情報取得" then
         checks = params[:check]
         account = Account.find_by(user: current_user.email)
         account.update(
