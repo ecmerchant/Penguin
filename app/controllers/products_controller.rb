@@ -47,12 +47,12 @@ class ProductsController < ApplicationController
     border_used_price = @account.used_price_diff.to_i
     label_tag = @account.label
     temp = Product.where(user: current_user.email)
+    @total = temp.count
     if label_tag != "すべて" then
       temp = temp.where(label: label_tag)
     end
 
     temp = temp.order("search_result DESC NULLS LAST")
-    @total = temp.count
     @products = temp.page(params[:page]).per(PER).order("search_result DESC NULLS LAST")
 
     temp2 = Candidate.where(user: current_user.email)
