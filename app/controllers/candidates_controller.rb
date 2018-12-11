@@ -63,7 +63,7 @@ class CandidatesController < ApplicationController
     if request.post? then
       logger.debug(request.referer)
       commit = params[:commit]
-      if commit == "更新" then
+      if commit == "DB編集内容の更新" then
         memos = params[:memo]
         labels = params[:label]
         jans =  params[:jan]
@@ -88,7 +88,7 @@ class CandidatesController < ApplicationController
           end
         end
 
-      elsif commit == "削除" then
+      elsif commit == "データの削除" then
         checks = params[:check]
         if checks != nil then
           temp = Product.where(user: current_user.email)
@@ -99,7 +99,7 @@ class CandidatesController < ApplicationController
             end
           end
         end
-      elsif commit == "適用" then
+      elsif commit == "抽出" then
         cond = params[:condition]
         if cond != nil then
           key = cond.keys[0]
@@ -128,7 +128,17 @@ class CandidatesController < ApplicationController
       end
       redirect_to request.referer
     end
+  end
 
+  def clear
+    account = Account.find_by(user: current_user.email)
+    account.update(
+      condition: "全て",
+      attachment: "false",
+      new_price_diff: -99999,
+      used_price_diff: -99999
+    )
+    redirect_to request.referer
   end
 
 end

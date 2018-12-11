@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   get 'candidates/show'
   post 'candidates/show'
+  get 'candidates/clear'
   get 'candidates/show/:asin', to: 'candidates#show'
 
   get 'products/search'

@@ -13,19 +13,6 @@ class ProductsController < ApplicationController
   PER = 100
 
   def clear
-    temp = Candidate.where(user: current_user.email)
-    temp.update(
-      filtered: false
-    )
-    targets = Product.where(user: current_user.email)
-    targets.each do |tag|
-      asin = tag.asin
-      temp = Candidate.where(user: current_user.email, asin: asin)
-      result = temp.count
-      tag.update(
-        search_result: result.to_s
-      )
-    end
     account = Account.find_by(user: current_user.email)
     account.update(
       condition: "全て",
@@ -51,10 +38,9 @@ class ProductsController < ApplicationController
     if label_tag != "すべて" then
       temp = temp.where(label: label_tag)
     end
-
+    @fcounter = temp.count
     temp = temp.order("search_result DESC NULLS LAST")
     @products = temp.page(params[:page]).per(PER).order("search_result DESC NULLS LAST")
-
     temp2 = Candidate.where(user: current_user.email)
 
     @flg_A = false
