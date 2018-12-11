@@ -1,5 +1,7 @@
 class AccountsController < ApplicationController
 
+  include WheneverHelper
+
   require 'nokogiri'
   require 'open-uri'
 
@@ -78,10 +80,7 @@ class AccountsController < ApplicationController
           shop_url: shop_url,
           patrol_time: patrol_time
         )
-
-        @account.update(
-          shop_url: shop_url
-        )
+        update_schedule
       elsif params[:commit] == "更新" then
         res = params[:label]
         number = res[:number].to_i

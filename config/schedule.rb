@@ -1,7 +1,6 @@
-# /config/schedule.rb
+set :output, 'log/output.log'
 set :environment, :development
-set :output, {:error => 'log/error.log', :standard => 'log/cron.log'}
-
-every 1.day, at: '4:30 am' do
-  rake "product_patrol:operarte['murakami@ec-merchant.com']"
+# minute, hour, day_of_month, month, day_of_week
+every 1.day, :at => '02:20' do
+    rake "product_patrol:operarte['murakami@ec-merchant.com']"
 end
