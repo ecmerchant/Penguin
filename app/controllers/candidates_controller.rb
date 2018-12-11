@@ -122,7 +122,8 @@ class CandidatesController < ApplicationController
           condition: condition,
           attachment: attach,
           new_price_diff: diff_new_price,
-          used_price_diff: diff_used_price
+          used_price_diff: diff_used_price,
+          filtered: true
         )
         #Product.new.reload(current_user.email)
       end
@@ -136,7 +137,8 @@ class CandidatesController < ApplicationController
       condition: "全て",
       attachment: "false",
       new_price_diff: -99999,
-      used_price_diff: -99999
+      used_price_diff: -99999,
+      filtered: false
     )
     redirect_to request.referer
   end

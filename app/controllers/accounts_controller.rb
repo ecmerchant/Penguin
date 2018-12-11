@@ -80,7 +80,7 @@ class AccountsController < ApplicationController
           shop_url: shop_url,
           patrol_time: patrol_time
         )
-        update_schedule
+        #update_schedule
       elsif params[:commit] == "更新" then
         res = params[:label]
         number = res[:number].to_i

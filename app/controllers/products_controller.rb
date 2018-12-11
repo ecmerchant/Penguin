@@ -10,7 +10,7 @@ class ProductsController < ApplicationController
     redirect_to root_url, :alert => exception.message
   end
 
-  PER = 100
+  PER = 200
 
   def clear
     account = Account.find_by(user: current_user.email)
@@ -18,7 +18,8 @@ class ProductsController < ApplicationController
       condition: "全て",
       attachment: "false",
       new_price_diff: -99999,
-      used_price_diff: -99999
+      used_price_diff: -99999,
+      filtered: false
     )
     redirect_to products_show_path
   end
@@ -33,14 +34,7 @@ class ProductsController < ApplicationController
     border_new_price = @account.new_price_diff.to_i
     border_used_price = @account.used_price_diff.to_i
     label_tag = @account.label
-    temp = Product.where(user: current_user.email)
-    @total = temp.count
-    if label_tag != "すべて" then
-      temp = temp.where(label: label_tag)
-    end
-    @fcounter = temp.count
-    temp = temp.order("search_result DESC NULLS LAST")
-    @products = temp.page(params[:page]).per(PER).order("search_result DESC NULLS LAST")
+
     temp2 = Candidate.where(user: current_user.email)
 
     @flg_A = false
@@ -73,6 +67,22 @@ class ProductsController < ApplicationController
     temp2 = temp2.where("diff_new_price >= ?", border_new_price)
     temp2 = temp2.where("diff_used_price >= ?", border_used_price)
     @candidates = temp2
+
+
+    temp = Product.where(user: current_user.email)
+    @total = temp.count
+    if label_tag != "すべて" then
+      temp = temp.where(label: label_tag)
+    end
+
+    temp = temp.order("search_result DESC NULLS LAST")
+    @products = temp.page(params[:page]).per(PER).order("search_result DESC NULLS LAST")
+
+    if @account.filtered == true then
+      @fcounter = temp2.group(:asin).pluck(:asin).count
+    else
+      @fcounter = temp.count
+    end
 
     if request.post? then
       commit = params[:commit]
@@ -120,26 +130,48 @@ class ProductsController < ApplicationController
         if cond != nil then
           key = cond.keys[0]
           condition = cond[key]
+        else
+          cond = @account.condition
         end
         attach = params[:attachment]
-
-        if attach == "true" then
-          attach = "true"
+        if attach != nil then
+          if attach == "true" then
+            attach = "true"
+          else
+            attach = "false"
+          end
         else
-          attach = "false"
+          attach = @account.attachment
         end
 
-        diff_new_price = params[:diff_new_price].to_i
-        diff_used_price = params[:diff_used_price].to_i
+        diff_new_price = params[:diff_new_price]
+        if diff_new_price != nil then
+          diff_new_price = params[:diff_new_price].to_i
+        else
+          diff_new_price = @account.diff_new_price
+        end
+
+        diff_used_price = params[:diff_used_price]
+        if diff_used_price != nil then
+          diff_used_price = params[:diff_used_price].to_i
+        else
+          diff_used_price = @account.diff_used_price
+        end
 
         label = params[:select_label]
+        if label != nil then
+          label = params[:select_label]
+        else
+          label = @account.label
+        end
 
         @account.update(
           condition: condition,
           attachment: attach,
           new_price_diff: diff_new_price,
           used_price_diff: diff_used_price,
-          label: label
+          label: label,
+          filtered: true
         )
 
         #Product.new.reload(current_user.email)
