@@ -37,7 +37,7 @@ class ProductsController < ApplicationController
     border_used_price = @account.used_price_diff.to_i
     label_tag = @account.label
 
-    temp2 = Candidate.where(user: current_user.email)
+    temp2 = Candidate.where(user: current_user.email, sold: false)
 
     @flg_A = false
     @flg_AB = false

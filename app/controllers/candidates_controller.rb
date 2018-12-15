@@ -31,7 +31,7 @@ class CandidatesController < ApplicationController
     border_new_price = @account.new_price_diff.to_i
     border_used_price = @account.used_price_diff.to_i
 
-    temp2 = Candidate.where(user: current_user.email)
+    temp2 = Candidate.where(user: current_user.email, sold: false)
 
     if border_condition == "A以上" then
       temp2 = temp2.where("condition like ?", "%A(美品)%")

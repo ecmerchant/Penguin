@@ -136,14 +136,14 @@ class Product < ApplicationRecord
             diff_new_price = (0.85 * new_price.to_f).round(0) - price
             diff_used_price = (0.85 * used_price.to_f).round(0) - price
 
-            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price.to_i, diff_used_price: diff_used_price.to_i, sold: true)
+            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price.to_i, diff_used_price: diff_used_price.to_i, sold: false)
           rescue => e
             logger.debug(e)
           end
         else
           logger.debug("==== REGISTERD ITEM ====")
           begin
-            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, sold: true)
+            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, sold: false)
           rescue => e
             logger.debug(e)
           end
