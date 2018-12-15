@@ -232,7 +232,7 @@ class ProductsController < ApplicationController
           fname = "product_data_" + strTime + ".csv"
           logger.debug(fname)
           send_data(output, filename: fname, type: :csv)
-          redirect_to products_show_path
+          #redirect_to products_show_path
         end
       elsif commit == "キタムラ情報取得" then
         checks = params[:check]
