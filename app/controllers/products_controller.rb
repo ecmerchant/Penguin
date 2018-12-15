@@ -275,7 +275,7 @@ class ProductsController < ApplicationController
             if row[0] == nil || row[0].value == "" then break end
             if i != 0 then
               if row[0] != nil then
-                asin = row[0].value.to_s
+                asin = row[0].value.to_s.strip
               end
               if row[1] != nil then
                 title = row[1].value.to_s
@@ -287,7 +287,7 @@ class ProductsController < ApplicationController
                 used_price = row[3].value.to_f
               end
               if row[4] != nil then
-                jan = row[4].value.to_s
+                jan = row[4].value.to_s.strip
               end
               if row[5] != nil then
                 sales = row[5].value.to_i

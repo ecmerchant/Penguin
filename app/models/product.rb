@@ -16,7 +16,6 @@ class Product < ApplicationRecord
     border_new_price = account.new_price_diff.to_i
     border_used_price = account.used_price_diff.to_i
 
-
     if border_condition == "A以上" then
       filter_text = temp.where("condition like ?", "%A(美品)%")
     elsif border_condition == "AB以上" then
@@ -24,7 +23,6 @@ class Product < ApplicationRecord
     elsif border_condition == "B以上" then
       temp = temp.where("condition like ? OR condition like ? OR condition like ?", "%A(美品)%", "%AB(良品)%", "%B(並品)%")
     end
-
 
     targets = Product.where(user: user)
     candidates = Candidate.where(user: user)
