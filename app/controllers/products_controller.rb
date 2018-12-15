@@ -135,6 +135,8 @@ class ProductsController < ApplicationController
           cond = @account.condition
         end
         attach = params[:attachment]
+        logger.debug("+++++++++++++")
+        logger.debug(attach)
         if attach != nil then
           if attach == "true" then
             attach = "true"
@@ -142,21 +144,21 @@ class ProductsController < ApplicationController
             attach = "false"
           end
         else
-          attach = @account.attachment
+          attach = "false"
         end
 
         diff_new_price = params[:diff_new_price]
         if diff_new_price != nil then
           diff_new_price = params[:diff_new_price].to_i
         else
-          diff_new_price = @account.diff_new_price
+          diff_new_price = @account.new_price_diff
         end
 
         diff_used_price = params[:diff_used_price]
         if diff_used_price != nil then
           diff_used_price = params[:diff_used_price].to_i
         else
-          diff_used_price = @account.diff_used_price
+          diff_used_price = @account.used_price_diff
         end
 
         label = params[:select_label]
