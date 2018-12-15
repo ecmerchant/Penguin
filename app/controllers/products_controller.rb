@@ -259,6 +259,9 @@ class ProductsController < ApplicationController
           ProductPatrolJob.perform_later(current_user.email, data)
         else
           targets = Product.where(user: current_user.email)
+          account.update(
+            search_num: targets.length
+          )
           data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
           ProductPatrolJob.perform_later(current_user.email, data)
         end
