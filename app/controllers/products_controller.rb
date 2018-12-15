@@ -212,6 +212,26 @@ class ProductsController < ApplicationController
           logger.debug(fname)
           send_data(output, filename: fname, type: :csv)
         else
+          temp = Product.where(user: current_user.email)
+          tag = temp
+          bom = "\uFEFF"
+          output = CSV.generate(bom) do |csv|
+            header = Constants::CONV_P.values
+            keys = Constants::CONV_P.keys
+            csv << header
+            tag.each do |tt|
+              buf = Array.new
+              keys.each do |hh|
+                buf.push(tt[hh])
+              end
+              csv << buf
+            end
+          end
+          tt = Time.now
+          strTime = tt.strftime("%Y%m%d%H%M")
+          fname = "product_data_" + strTime + ".csv"
+          logger.debug(fname)
+          send_data(output, filename: fname, type: :csv)
           redirect_to products_show_path
         end
       elsif commit == "キタムラ情報取得" then
