@@ -1,7 +1,7 @@
 <div class="page-header" id="banner">
   <div class="row">
     <div class="col-lg-12">
-      <h5>DB表示設定 &nbsp;<small>全 <%= @total %>件中　フィルタ適用後 <%= @fcounter %>件 <%= if @account.filtered == true then "(フィルタ有効)" else "(フィルタ無効)" end %></small></h5>
+      <h5>DB表示設定 &nbsp;<small>全 <%= @all_num %>件中　フィルタ適用後 <%= @fcounter %>件 <%= if @account.filtered == true then "(フィルタ有効)" else "(フィルタ無効)" end %></small></h5>
       <div class="col-lg-12">
         <%= form_tag('/products/show', method:'post', id:'update_form') do %>
         <label>条件の絞込み</label>
@@ -97,8 +97,8 @@
         <br>※1 チェックなしの場合全取得 &nbsp;&nbsp;&nbsp;※2 DBにチェックを入れたもののみ対象<br><br>
       </div>
       <br>
-      <label>キタムラ情報の取得状況　全<%= @total %>件中　<%= @account.progress.to_i %>件済み</label>
-      <progress class="progress progress-striped" max="100" value="<%= if @products.count != 0 then (@account.progress.to_i * 100 / @total).round(0) else 0 end %>" style="width:50%;"></progress>
+      <label>キタムラ情報の取得状況　全<%= @total %>件中　<%= if @total != 0 then @account.progress.to_i else 0 end %>件済み</label>
+      <progress class="progress progress-striped" max="100" value="<%= if @total != 0 then (@account.progress.to_i * 100 / @total).round(0) else 0 end %>" style="width:50%;"></progress>
       <%= paginate @products %>
       <br><label style='vertical-align:middle;'>全選択</label>
       <input type="checkbox" name="check[all]" id="check_all"/>

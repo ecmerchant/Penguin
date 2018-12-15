@@ -6,7 +6,7 @@ class CandidatesController < ApplicationController
     redirect_to root_url, :alert => exception.message
   end
 
-  PER = 40
+  PER = 100
 
   def show
     @login_user = current_user

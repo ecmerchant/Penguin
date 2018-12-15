@@ -29,6 +29,8 @@ class ProductsController < ApplicationController
     @labels = Label.where(user: current_user.email).pluck(:caption)
     @labels_add = @labels.push("すべて")
     @account = Account.find_or_create_by(user: current_user.email)
+    @total = @account.search_num.to_i
+
     border_condition = @account.condition
     border_attachment = @account.attachment
     border_new_price = @account.new_price_diff.to_i
@@ -68,9 +70,8 @@ class ProductsController < ApplicationController
     temp2 = temp2.where("diff_used_price >= ?", border_used_price)
     @candidates = temp2
 
-
     temp = Product.where(user: current_user.email)
-    @total = temp.count
+    @all_num = temp.count
     if label_tag != "すべて" then
       temp = temp.where(label: label_tag)
     end
@@ -226,6 +227,11 @@ class ProductsController < ApplicationController
               ids.push(tid)
             end
           end
+
+          account.update(
+            search_num: ids.length
+          )
+
           targets = Product.where id: ids
           data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
           ProductPatrolJob.perform_later(current_user.email, data)

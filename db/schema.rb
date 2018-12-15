@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181211171138) do
+ActiveRecord::Schema.define(version: 20181215122234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20181211171138) do
     t.string   "label"
     t.integer  "progress"
     t.boolean  "filtered",        default: false, null: false
+    t.integer  "search_num"
   end
 
   create_table "candidates", force: :cascade do |t|
@@ -73,6 +74,7 @@ ActiveRecord::Schema.define(version: 20181211171138) do
     t.string   "user"
     t.boolean  "filtered",      default: false, null: false
     t.integer  "search_result"
+    t.boolean  "sold",          default: false, null: false
     t.index ["user", "asin"], name: "for_upsert", unique: true, using: :btree
   end
 
