@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181215122234) do
+ActiveRecord::Schema.define(version: 20181215150257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20181215122234) do
     t.string   "user"
     t.string   "item_id"
     t.boolean  "filtered",        default: false, null: false
+    t.boolean  "sold",            default: false, null: false
     t.index ["user", "asin", "item_id"], name: "for_upsert_candidate", unique: true, using: :btree
   end
 
