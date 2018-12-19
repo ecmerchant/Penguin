@@ -76,7 +76,7 @@
         <br>
         <h5>登録用CSVのダウンロード</h5>
         <%= form_tag('/accounts/download', method: 'post') do %>
-            <%= submit_tag "ダウンロード", {class: 'btn btn-info'} %>
+            <%= submit_tag "ダウンロード", {class: 'btn btn-info', id: 'format_download'} %>
         <% end %>
         <br>
         <h5>データの全削除</h5>
@@ -93,3 +93,14 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#format_download').on('click', function() {
+      setTimeout(function(){
+          location.reload();
+      },1000);
+    });
+
+  });
+</script>

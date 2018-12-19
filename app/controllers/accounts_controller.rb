@@ -4,6 +4,7 @@ class AccountsController < ApplicationController
 
   require 'nokogiri'
   require 'open-uri'
+  require 'rubyXL'
 
   before_action :authenticate_user!
 
@@ -29,13 +30,23 @@ class AccountsController < ApplicationController
 
   def download
     if request.post? then
+      workbook = RubyXL::Workbook.new
+      worksheet = workbook[0]
+      header = ["ASIN", "商品名", "新品価格", "中古価格", "JAN", "売れ行き"]
+      header.each_with_index do |col, index|
+        worksheet.add_cell(0,index,col)
+      end
+
+      data = workbook.stream.read
+=begin
       bom = "\uFEFF"
       output = CSV.generate(bom) do |csv|
         header = ["ASIN", "商品名", "新品価格", "中古価格", "JAN", "売れ行き"]
         csv << header
       end
-      fname = "登録用データ.csv"
-      send_data(output, filename: fname, type: :csv)
+=end
+      fname = "登録用データ.xlsx"
+      send_data(data, filename: fname, type: :xls)
     else
       redirect_to accounts_setup_path
     end
