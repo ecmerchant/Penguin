@@ -294,6 +294,7 @@ class ProductsController < ApplicationController
           data_list = Array.new
           workbook = RubyXL::Parser.parse(data.path)
           worksheet = workbook.first
+          ahash = Hash.new
           worksheet.each_with_index do |row, i|
             if row[0] == nil || row[0].value == "" then break end
             if i != 0 then
@@ -315,8 +316,12 @@ class ProductsController < ApplicationController
               if row[5] != nil then
                 sales = row[5].value.to_i
               end
+
               delta_link = "https://delta-tracer.com/item/detail/jp/" + asin
-              data_list << Product.new(user: user, asin: asin, title: title, new_price: new_price, used_price: used_price, jan: jan, sales: sales, delta_link: delta_link)
+              if ahash.has_key?(asin) == false then
+                data_list << Product.new(user: user, asin: asin, title: title, new_price: new_price, used_price: used_price, jan: jan, sales: sales, delta_link: delta_link)
+                ahash[asin] = jan
+              end
             end
           end
           Product.import data_list, on_duplicate_key_update: {constraint_name: :for_upsert, columns: [:title, :new_price, :used_price, :jan, :sales, :delta_link]}
