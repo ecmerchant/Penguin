@@ -68,8 +68,10 @@ class Product < ApplicationRecord
     total = data.count
     account = Account.find_by(user: user)
     account.update(
-      progress: counter
+      progress: counter,
+      search_num: total.to_i
     )
+
     product = Product.where(user: user)
     candidates = Candidate.where(user: user)
     logger.debug(total)
@@ -137,7 +139,7 @@ class Product < ApplicationRecord
             diff_used_price = (0.85 * used_price.to_f).round(0) - price
             if title != nil then
               data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, url: item_page, title: title, price: price, attachment: attachment, memo: memo, condition: condition, diff_new_price: diff_new_price.to_i, diff_used_price: diff_used_price.to_i, sold: false)
-            end 
+            end
           rescue => e
             logger.debug(e)
           end

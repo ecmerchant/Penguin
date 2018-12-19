@@ -236,10 +236,7 @@ class ProductsController < ApplicationController
         end
       elsif commit == "キタムラ情報取得" then
         checks = params[:check]
-        account = Account.find_by(user: current_user.email)
-        account.update(
-          progress: 0
-        )
+
         if checks != nil then
           temp = Product.where(user: current_user.email)
           ids = Array.new
@@ -249,19 +246,11 @@ class ProductsController < ApplicationController
               ids.push(tid)
             end
           end
-
-          account.update(
-            search_num: ids.length
-          )
-
           targets = Product.where id: ids
           data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
           ProductPatrolJob.perform_later(current_user.email, data)
         else
           targets = Product.where(user: current_user.email)
-          account.update(
-            search_num: targets.length
-          )
           data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
           ProductPatrolJob.perform_later(current_user.email, data)
         end
