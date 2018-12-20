@@ -30,7 +30,7 @@ class ProductsController < ApplicationController
     @labels_add = @labels.push("すべて")
     @account = Account.find_or_create_by(user: current_user.email)
     @total = @account.search_num.to_i
-
+    @task_num = Resque.size(current_user.email)
     border_condition = @account.condition
     border_attachment = @account.attachment
     border_new_price = @account.new_price_diff.to_i
@@ -248,11 +248,11 @@ class ProductsController < ApplicationController
           end
           targets = Product.where id: ids
           data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
-          ProductPatrolJob.perform_later(current_user.email, data)
+          ProductPatrolJob.set(queue: current_user.email).perform_later(current_user.email, data)
         else
           targets = Product.where(user: current_user.email)
           data = targets.group(:jan, :asin, :new_price, :used_price).pluck(:jan, :asin, :new_price, :used_price)
-          ProductPatrolJob.perform_later(current_user.email, data)
+          ProductPatrolJob.set(queue: current_user.email).perform_later(current_user.email, data)
         end
         redirect_to products_show_path
       end

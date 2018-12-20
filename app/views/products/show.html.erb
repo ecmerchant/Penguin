@@ -97,7 +97,7 @@
         <br>※1 チェックなしの場合全取得 &nbsp;&nbsp;&nbsp;※2 DBにチェックを入れたもののみ対象<br><br>
       </div>
       <br>
-      <label>キタムラ情報の取得状況　全<%= @total %>件中　<%= if @total != 0 then @account.progress.to_i else 0 end %>件済み</label>
+      <label>キタムラ情報の取得状況　全<%= @total %>件中　<%= if @total != 0 then @account.progress.to_i else 0 end %>件済み <small style="margin-left:10px;">登録済みタスク：<%= @task_num.to_i %>件</small></label>
       <progress class="progress progress-striped" max="100" value="<%= if @total != 0 then (@account.progress.to_i * 100 / @total).round(0) else 0 end %>" style="width:50%;"></progress>
       <%= paginate @products %>
       <br><label style='vertical-align:middle;'>全選択</label>
