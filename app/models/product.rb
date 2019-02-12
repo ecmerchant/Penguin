@@ -146,7 +146,7 @@ class Product < ApplicationRecord
         else
           logger.debug("==== REGISTERD ITEM ====")
           begin
-            data_list << Candidate.new(user: user, jan: jan, asin: asin, item_id: item_id, sold: false)
+            judge.update(sold: false)
           rescue => e
             logger.debug(e)
           end
