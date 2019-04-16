@@ -8,6 +8,9 @@ class CheckAsinJob < ApplicationJob
 
   def perform(user)
     products = Product.where(user: user)
+    products.update(
+      self_sale: false
+    )
     @account = Account.find_or_create_by(user: user)
     org_url = @account.shop_url
     maxnum = 1000
